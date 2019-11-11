@@ -1,0 +1,43 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/topics/topics",
+    "pages/personcenter/personcenter"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "马克豚博客",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#aaaaaa",
+    "selectedColor": "#409EFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/image/tabbar/home.png",
+        "selectedIconPath": "static/image/tabbar/home-selected.png"
+      },
+      {
+        "pagePath": "pages/topics/topics",
+        "text": "专题",
+        "iconPath": "static/image/tabbar/topic.png",
+        "selectedIconPath": "static/image/tabbar/topic-selected.png"
+      },
+      {
+        "pagePath": "pages/personcenter/personcenter",
+        "text": "我",
+        "iconPath": "static/image/tabbar/me.png",
+        "selectedIconPath": "static/image/tabbar/me-selected.png"
+      }
+    ],
+    "position": "bottom"
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap22.json"
+}
