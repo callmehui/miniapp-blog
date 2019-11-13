@@ -734,7 +734,7 @@ function initData(vueOptions, context) {
     try {
       data = data.call(context); // 支持 Vue.prototype 上挂的数据
     } catch (e) {
-      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.warn('根据 Vue 的 data 函数初始化小程序 data 失败，请尽量确保 data 函数中不访问 vm 对象，否则可能影响首次数据渲染速度。', data);
       }
     }
@@ -7089,7 +7089,7 @@ function type(obj) {
 
 function flushCallbacks$1(vm) {
     if (vm.__next_tick_callbacks && vm.__next_tick_callbacks.length) {
-        if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+        if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:flushCallbacks[' + vm.__next_tick_callbacks.length + ']');
@@ -7110,14 +7110,14 @@ function nextTick$1(vm, cb) {
     //1.nextTick 之前 已 setData 且 setData 还未回调完成
     //2.nextTick 之前存在 render watcher
     if (!vm.__next_tick_pending && !hasRenderWatcher(vm)) {
-        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + vm._uid +
                 ']:nextVueTick');
         }
         return nextTick(cb, vm)
     }else{
-        if(Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG){
+        if(Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG){
             var mpInstance$1 = vm.$scope;
             console.log('[' + (+new Date) + '][' + (mpInstance$1.is || mpInstance$1.route) + '][' + vm._uid +
                 ']:nextMPTick');
@@ -7193,7 +7193,7 @@ var patch = function(oldVnode, vnode) {
     });
     var diffData = diff(data, mpData);
     if (Object.keys(diffData).length) {
-      if (Object({"VUE_APP_PLATFORM":"mp-weixin","NODE_ENV":"development","BASE_URL":"/"}).VUE_APP_DEBUG) {
+      if (Object({"NODE_ENV":"development","VUE_APP_PLATFORM":"mp-weixin","BASE_URL":"/"}).VUE_APP_DEBUG) {
         console.log('[' + (+new Date) + '][' + (mpInstance.is || mpInstance.route) + '][' + this._uid +
           ']差量更新',
           JSON.stringify(diffData));
@@ -7571,9 +7571,9 @@ internalMixin(Vue);
 /***/ }),
 
 /***/ 21:
-/*!******************************************************************!*\
-  !*** I:/minapp-blog/codes/miniapp-blog/common/image/article.png ***!
-  \******************************************************************/
+/*!*******************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/image/article.png ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7613,9 +7613,9 @@ module.exports = g;
 /***/ }),
 
 /***/ 4:
-/*!****************************************************!*\
-  !*** I:/minapp-blog/codes/miniapp-blog/pages.json ***!
-  \****************************************************/
+/*!*****************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/pages.json ***!
+  \*****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8512,9 +8512,9 @@ main();
 /***/ }),
 
 /***/ 55:
-/*!***********************************************************************!*\
-  !*** I:/minapp-blog/codes/miniapp-blog/components/uni-icons/icons.js ***!
-  \***********************************************************************/
+/*!************************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/components/uni-icons/icons.js ***!
+  \************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8628,10 +8628,298 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 
 /***/ }),
 
+/***/ 63:
+/*!******************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/api/home.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleSummarys = getArticleSummarys;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 64));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+function getArticleSummarys() {var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'descUpdateAt'; // 查询文章简略信息
+  return request.request({
+    method: 'post',
+    url: '/api/home/home/articlelist',
+    data: {
+      limit: limit,
+      offset: offset,
+      order: order } });
+
+
+}
+
+/***/ }),
+
+/***/ 64:
+/*!***************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/request.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {var initdata = _interopRequireWildcard(__webpack_require__(/*! @/common/data/initdata.js */ 65));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+module.exports = {
+  request: request };
+
+
+function request(options) {var
+
+  url =
+
+
+
+
+
+
+
+
+
+  options.url,data = options.data,header = options.header,method = options.method,dataType = options.dataType,responseType = options.responseType,success = options.success,fail = options.fail,complete = options.complete,showError = options.showError;
+
+  return new Promise(function (resolve, reject) {
+    uni.request({
+      url: initdata.baseUrl + url,
+      data: data,
+      header: header,
+      method: method,
+      dataType: dataType,
+      responseType: responseType,
+      success: function success(res) {
+        accessPermission(res.data, showError).
+        then(function (data) {
+          resolve(data);
+        }).
+        catch(function (data) {
+          reject(data);
+        });
+      },
+      fail: function fail(res) {
+        reject(res);
+      },
+      complete: complete });
+
+  });
+}
+
+function accessPermission(res, showError) {
+  return new Promise(function (resolve, reject) {
+    if (res.errcode >= 200 && res.errcode < 300 || res.errcode === 304) {
+      resolve(res.data);
+    } else {
+      if (!showError) {// showError为真（默认为真），由这个方法显示错误信息
+        uni.showToast({
+          title: res.message,
+          icon: 'none',
+          duration: 2000 });
+
+      } else {// showError为真，把错误信息暴露给外部
+        reject(res.message);
+      }
+    }
+  });
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 65:
+/*!******************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/data/initdata.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = void 0;var baseUrl = 'https://immortalboy.cn';exports.baseUrl = baseUrl;
+
+/***/ }),
+
+/***/ 66:
+/*!*************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/tools.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+
+{
+  install: function install(Vue, options) {
+    // 全局函数的hasClass()、addClass()、removeClass()
+    // 用法示例：this.funcName()
+    Vue.prototype.hasClass = hasClass;
+    Vue.prototype.addClass = addClass;
+    Vue.prototype.removeClass = removeClass;
+    Vue.prototype.dateToString = dateToString;
+    Vue.prototype.timeMillisFormat = timeMillisFormat;
+    Vue.prototype.translateTimeToText = translateTimeToText;
+    Vue.prototype.getUUid = getUUid;
+    Vue.prototype.getRandomList = getRandomList;
+  } };exports.default = _default;
+
+
+function removeClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  if (hasClass(elem, cls)) {
+    var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, '') + ' ';
+    while (newClass.indexOf(' ' + cls + ' ') >= 0) {
+      newClass = newClass.replace(' ' + cls + ' ', ' ');
+    }
+    elem.className = newClass.replace(/^\s+|\s+$/g, '');
+    return true;
+  }
+  return false;
+}
+
+function addClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  if (!hasClass(elem, cls)) {
+    elem.className = elem.className === '' ? cls : elem.className + ' ' + cls;
+    return true;
+  }
+  return false;
+}
+
+function hasClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  cls = cls || '';
+  if (cls.replace(/\s/g, '').length === 0) {
+    // 当cls没有参数时，返回false
+    return false;
+  }
+  return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+}
+
+function dateToString(date, stringType) {
+  var dateObj;
+  dateObj = Date.parse(arguments[0]);
+  dateObj = new Date(dateObj);
+  var year = dateObj.getFullYear();
+  var month = dateObj.getMonth() + 1 < 10 ? '0' + (dateObj.getMonth() + 1) : dateObj.getMonth() + 1;
+  var day = dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate();
+  var hour = dateObj.getHours() < 10 ? '0' + dateObj.getHours() : dateObj.getHours();
+  var minute = dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes() : dateObj.getMinutes();
+  var second = dateObj.getSeconds() < 10 ? '0' + dateObj.getSeconds() : dateObj.getSeconds();
+  var dateString = '';
+  if (arguments.length > 1 && arguments[1] === 'date') {
+    dateString = year + '-' + month + '-' + day;
+  } else if (arguments.length > 1 && arguments[1] === 'time') {
+    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  } else if (arguments.length === 1) {
+    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  }
+  return dateString;
+}
+
+/**
+   * 时间戳格式化
+   * @param {Long} 时间戳
+   * @param {String} 格式化, 如: yyyy-MM-dd
+   */
+function timeMillisFormat(timeMillis) {var pattern = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'yyyy-MM-dd hh:mm:ss';
+  var dateObj;
+  if (!isNaN(timeMillis)) {
+    dateObj = new Date(Number(timeMillis));
+  } else {
+    // 转换时间格式2018-11-11为2018/11/11
+    dateObj = new Date(Date.parse(timeMillis));
+  }
+  return dformat(dateObj, pattern);
+}
+
+function dformat(date, fmt) {
+  if (date instanceof Date) {
+    var o = {
+      'M+': date.getMonth() + 1, // 月份
+      'd+': date.getDate(), // 日
+      'h+': date.getHours(), // 小时
+      'm+': date.getMinutes(), // 分
+      's+': date.getSeconds(), // 秒
+      'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+      'S': date.getMilliseconds() // 毫秒
+    };
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+      }
+    }
+    return fmt;
+  } else {
+    return date;
+  }
+}
+
+/**
+   * 把日期转换为例如：几分钟前，几天前这种格式显示
+   * @param {String} timeString 时间字符串，要求能够转换为时间戳
+   */
+function translateTimeToText(timeString) {
+  var time = Math.ceil((Date.now() - Date.parse(timeString)) / 1000);
+  var timeText = '';
+  if (time <= 60) {
+    timeText = '刚刚';
+  } else if (time < 3600) {
+    timeText = "".concat(Math.ceil(time / 60), "\u5206\u949F\u524D");
+  } else if (time < 86400) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600)), "\u5C0F\u65F6\u524D");
+  } else if (time < 86400 * 30) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24)), "\u5929\u524D");
+  } else if (time < 86400 * 365) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 30)), "\u4E2A\u6708\u524D");
+  } else if (time >= 86400 * 365) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 365)), "\u5E74\u524D");
+  }
+  return timeText;
+}
+
+function getUUid() {// 获取唯一值
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0;var v = c === 'x' ? r : r & 0x3 | 0x8;
+    return v.toString(16);
+  });
+}
+
+/**
+   * 获取指定长度数据范围内指定书目的随机数
+   * @param {*} length 随机数长度范围
+   * @param {*} count 随机数随机数目
+   */
+function getRandomList(length, count) {
+  if (length >= count) {
+    var lengthArray = [];
+    var randomArray = [];
+    for (var i = 0; i < length; i++) {
+      lengthArray[i] = i;
+    }
+    lengthArray.sort(function () {
+      return 0.5 - Math.random();
+    });
+    for (var _i = 0; _i < count; _i++) {
+      randomArray.push(lengthArray[_i]);
+    }
+    return randomArray;
+  } else {
+    return false;
+  }
+}
+
+/***/ }),
+
 /***/ 7:
-/*!*********************************************************************!*\
-  !*** I:/minapp-blog/codes/miniapp-blog/pages.json?{"type":"style"} ***!
-  \*********************************************************************/
+/*!**********************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/pages.json?{"type":"style"} ***!
+  \**********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8641,9 +8929,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /***/ }),
 
 /***/ 8:
-/*!********************************************************************!*\
-  !*** I:/minapp-blog/codes/miniapp-blog/pages.json?{"type":"stat"} ***!
-  \********************************************************************/
+/*!*********************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/pages.json?{"type":"stat"} ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

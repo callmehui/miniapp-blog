@@ -1,3 +1,5 @@
+import * as initdata from '@/common/data/initdata.js'
+
 module.exports = {
   request: request
 }
@@ -18,7 +20,7 @@ function request (options) {
 
   return new Promise((resolve, reject) => {
     uni.request({
-      url,
+      url: initdata.baseUrl + url,
       data,
       header,
       method,

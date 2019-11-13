@@ -34,13 +34,13 @@
 							:key="subIndex">
 							<view class="title">{{ subItem.title }}</view>
 							<view class="image-wrapper">
-								<image class="image" :src="subItem.imageUrl" mode="widthFix"></image>
+								<image class="image" :src="subItem.illustrationUrl" mode="widthFix"></image>
 							</view>
 							<view class="tools-wrapper">
 								<view class="tools-item-wrapper">
 									<view class="tools-item">
 										<text class="icon">&#xe716;</text>
-										<text>{{ subItem.updateAt }}</text>
+										<text>{{ timeMillisFormat(Date.parse(subItem.updatedAt), 'yyyy-MM-dd')}}</text>
 									</view>
 									<view class="tools-item">
 										<text class="icon">&#xe601;</text>
@@ -69,6 +69,7 @@
 	import UniSearch from '@/components/uni-search-bar/uni-search-bar.vue'
 	import UniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	import articleImage from '@/common/image/article.png'
+	import * as apiHome from '@/api/home.js'
 	
 	export default {
 		components: {
@@ -89,33 +90,7 @@
 							value: 'lastest',
 							actived: true
 						},
-						tabsContent: [
-							{
-								id: '1',
-								title: '双十一，我们在忙些什么',
-								imageUrl: articleImage,
-								updateAt: '2019-11-11',
-								browserNum: 20,
-								likeNum: 4,
-								commentNum: 2
-							},{
-								id: '1',
-								title: '双十一，我们在忙些什么',
-								imageUrl: articleImage,
-								updateAt: '2019-11-11',
-								browserNum: 20,
-								likeNum: 4,
-								commentNum: 2
-							},{
-								id: '1',
-								title: '双十一，我们在忙些什么',
-								imageUrl: articleImage,
-								updateAt: '2019-11-11',
-								browserNum: 20,
-								likeNum: 4,
-								commentNum: 2
-							}
-						]
+						tabsContent: []
 					},{
 						tabsHeader: {
 							text: '热门',
@@ -126,7 +101,7 @@
 							{
 								id: '1',
 								title: '双十一，我们在忙些什么',
-								imageUrl: articleImage,
+								illustrationUrl: articleImage,
 								updateAt: '2019-11-11',
 								likeNum: 4,
 								browserNum: 20,
@@ -143,7 +118,7 @@
 							{
 								id: '1',
 								title: '双十一，我们在忙些什么',
-								imageUrl: articleImage,
+								illustrationUrl: articleImage,
 								updateAt: '2019-11-11',
 								likeNum: 4,
 								browserNum: 20,
@@ -157,7 +132,7 @@
 			}
 		},
 		onLoad() {
-
+			this.getArticleSummarys()
 		},
 		onReachBottom () {
 			console.log('loadMore......')
@@ -176,6 +151,13 @@
 			},
 			changeTab (index, value) {
 				this.selectedTabIndex = index
+			},
+			getArticleSummarys () {
+				apiHome.getArticleSummarys()
+					.then(response => {
+						console.log(response)
+						this.tabs[this.selectedTabIndex].tabsContent = response.result
+					})
 			}
 		}
 	}
@@ -224,8 +206,10 @@ $primary-color: #409EFF;
 				}
 				.tab-content-wrapper {
 					border-bottom: 1px solid #eeeeee;
-					padding: 30rpx 0;
 					.tab-content {
+						margin-top: 40rpx;
+						padding-bottom: 20rpx;
+						border-bottom: 1px solid #f0f0f0;
 						.title {
 							font-size: 16px;
 							color: #333333;
@@ -244,7 +228,7 @@ $primary-color: #409EFF;
 								align-items: center;
 								.tools-item {
 									font-size: 14px;
-									color: #333333;
+									color: #999999;
 									margin-right: 20rpx;
 									&:last-child {
 										margin-right: 0;
