@@ -19,6 +19,10 @@
 				"navigationBarTitleText": "个人中心"
 			}
         }
+        ,{
+            "path" : "pages/articledetail/articledetail",
+            "style" : {}
+        }
     ],
 	"tabBar": {
 		"color": "#aaaaaa",

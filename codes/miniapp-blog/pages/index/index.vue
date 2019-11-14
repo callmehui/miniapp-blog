@@ -31,10 +31,11 @@
 						<view 
 							class="tab-content" 
 							v-for="(subItem, subIndex) in item.tabsContent"
-							:key="subIndex">
+							:key="subIndex"
+							@tap="viewArticle(subItem.objectId)">
 							<view class="title">{{ subItem.title }}</view>
 							<view class="image-wrapper">
-								<image class="image" :src="subItem.illustrationUrl" mode="widthFix"></image>
+								<image class="image" :src="subItem.illustrationUrl" mode="aspectFill"></image>
 							</view>
 							<view class="tools-wrapper">
 								<view class="tools-item-wrapper">
@@ -87,44 +88,24 @@
 					{
 						tabsHeader: {
 							text: '最新',
-							value: 'lastest',
+							value: 'descUpdateAt',
 							actived: true
 						},
 						tabsContent: []
 					},{
 						tabsHeader: {
 							text: '热门',
-							value: 'hotest',
+							value: 'descBrowserNum',
 							actived: true
 						},
-						tabsContent: [
-							{
-								id: '1',
-								title: '双十一，我们在忙些什么',
-								illustrationUrl: articleImage,
-								updateAt: '2019-11-11',
-								likeNum: 4,
-								browserNum: 20,
-								commentNum: 2
-							}
-						]
+						tabsContent: []
 					},{
 						tabsHeader: {
 							text: '标签',
-							value: 'classify',
+							value: 'descBrowserNum',
 							actived: true
 						},
-						tabsContent: [
-							{
-								id: '1',
-								title: '双十一，我们在忙些什么',
-								illustrationUrl: articleImage,
-								updateAt: '2019-11-11',
-								likeNum: 4,
-								browserNum: 20,
-								commentNum: 2
-							}
-						]
+						tabsContent: []
 					},
 				],
 				showLoadMore: false,
@@ -139,10 +120,6 @@
 			this.showLoadMore = true
 			setTimeout(() => {
 				this.showLoadMore = false
-				// this.loadMoreType = 'loading'
-				// setTimeout(() => {
-				// 	this.showLoadMore = false
-				// }, 1000)
 			}, 1000)
 		},
 		methods: {
@@ -151,13 +128,25 @@
 			},
 			changeTab (index, value) {
 				this.selectedTabIndex = index
+				let order = ''
+				order = this.tabs[index].tabsHeader.value
+				this.getArticleSummarys(order)
 			},
-			getArticleSummarys () {
-				apiHome.getArticleSummarys()
+			getArticleSummarys (order = 'descUpdateAt') {
+				uni.showLoading({
+					title: '加載中...',
+					mask: true
+				})
+				apiHome.getArticleSummarys(order)
 					.then(response => {
-						console.log(response)
 						this.tabs[this.selectedTabIndex].tabsContent = response.result
+						uni.hideLoading()
 					})
+			},
+			viewArticle (id) {
+				uni.navigateTo({
+					url: `../articledetail/articledetail?id=${id}`
+				})
 			}
 		}
 	}
@@ -218,6 +207,7 @@ $primary-color: #409EFF;
 							padding: 20rpx 0;
 							.image {
 								width: 100%;
+								max-height: 320rpx;
 							}
 						}
 						.tools-wrapper {

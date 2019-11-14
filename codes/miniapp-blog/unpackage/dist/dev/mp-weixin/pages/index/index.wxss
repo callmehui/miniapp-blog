@@ -91,6 +91,7 @@
 }
 .home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .tab-content .image-wrapper .image.data-v-60b235b5 {
           width: 100%;
+          max-height: 320rpx;
 }
 .home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .tab-content .tools-wrapper.data-v-60b235b5 {
         display: -webkit-box;

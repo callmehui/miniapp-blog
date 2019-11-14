@@ -255,7 +255,7 @@ function isSyncApi(name) {
 }
 
 function isCallbackApi(name) {
-  return CALLBACK_API_RE.test(name);
+  return CALLBACK_API_RE.test(name) && name !== 'onPush';
 }
 
 function handlePromise(promise) {
@@ -1285,11 +1285,20 @@ function parseBaseComponent(vueComponentOptions)
 {var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},isPage = _ref5.isPage,initRelation = _ref5.initRelation;var _initVueComponent =
   initVueComponent(_vue.default, vueComponentOptions),_initVueComponent2 = _slicedToArray(_initVueComponent, 2),VueComponent = _initVueComponent2[0],vueOptions = _initVueComponent2[1];
 
-  var componentOptions = {
-    options: {
-      multipleSlots: true,
-      addGlobalClass: true },
+  var options = {
+    multipleSlots: true,
+    addGlobalClass: true };
 
+
+  {
+    // 微信multipleSlots  部分情况有 bug，导致内容顺序错乱 如 u-list，提供覆盖选项
+    if (vueOptions['mp-weixin'] && vueOptions['mp-weixin']['options']) {
+      Object.assign(options, vueOptions['mp-weixin']['options']);
+    }
+  }
+
+  var componentOptions = {
+    options: options,
     data: initData(vueOptions, _vue.default.prototype),
     behaviors: initBehaviors(vueOptions, initBehavior),
     properties: initProperties(vueOptions.props, false, vueOptions.__file),
@@ -1604,6 +1613,184 @@ function normalizeComponent (
   }
 }
 
+
+/***/ }),
+
+/***/ 15:
+/*!*************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/tools.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
+
+{
+  install: function install(Vue, options) {
+    // 全局函数的hasClass()、addClass()、removeClass()
+    // 用法示例：this.funcName()
+    Vue.prototype.hasClass = hasClass;
+    Vue.prototype.addClass = addClass;
+    Vue.prototype.removeClass = removeClass;
+    Vue.prototype.dateToString = dateToString;
+    Vue.prototype.timeMillisFormat = timeMillisFormat;
+    Vue.prototype.translateTimeToText = translateTimeToText;
+    Vue.prototype.getUUid = getUUid;
+    Vue.prototype.getRandomList = getRandomList;
+  } };exports.default = _default;
+
+
+function removeClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  if (hasClass(elem, cls)) {
+    var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, '') + ' ';
+    while (newClass.indexOf(' ' + cls + ' ') >= 0) {
+      newClass = newClass.replace(' ' + cls + ' ', ' ');
+    }
+    elem.className = newClass.replace(/^\s+|\s+$/g, '');
+    return true;
+  }
+  return false;
+}
+
+function addClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  if (!hasClass(elem, cls)) {
+    elem.className = elem.className === '' ? cls : elem.className + ' ' + cls;
+    return true;
+  }
+  return false;
+}
+
+function hasClass() {
+  var elem = arguments[0];
+  var cls = arguments[1];
+  cls = cls || '';
+  if (cls.replace(/\s/g, '').length === 0) {
+    // 当cls没有参数时，返回false
+    return false;
+  }
+  return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+}
+
+function dateToString(date, stringType) {
+  var dateObj;
+  dateObj = Date.parse(arguments[0]);
+  dateObj = new Date(dateObj);
+  var year = dateObj.getFullYear();
+  var month = dateObj.getMonth() + 1 < 10 ? '0' + (dateObj.getMonth() + 1) : dateObj.getMonth() + 1;
+  var day = dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate();
+  var hour = dateObj.getHours() < 10 ? '0' + dateObj.getHours() : dateObj.getHours();
+  var minute = dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes() : dateObj.getMinutes();
+  var second = dateObj.getSeconds() < 10 ? '0' + dateObj.getSeconds() : dateObj.getSeconds();
+  var dateString = '';
+  if (arguments.length > 1 && arguments[1] === 'date') {
+    dateString = year + '-' + month + '-' + day;
+  } else if (arguments.length > 1 && arguments[1] === 'time') {
+    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  } else if (arguments.length === 1) {
+    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+  }
+  return dateString;
+}
+
+/**
+   * 时间戳格式化
+   * @param {Long} 时间戳
+   * @param {String} 格式化, 如: yyyy-MM-dd
+   */
+function timeMillisFormat(timeMillis) {var pattern = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'yyyy-MM-dd hh:mm:ss';
+  var dateObj;
+  if (!isNaN(timeMillis)) {
+    dateObj = new Date(Number(timeMillis));
+  } else {
+    // 转换时间格式2018-11-11为2018/11/11
+    dateObj = new Date(Date.parse(timeMillis));
+  }
+  return dformat(dateObj, pattern);
+}
+
+function dformat(date, fmt) {
+  if (date instanceof Date) {
+    var o = {
+      'M+': date.getMonth() + 1, // 月份
+      'd+': date.getDate(), // 日
+      'h+': date.getHours(), // 小时
+      'm+': date.getMinutes(), // 分
+      's+': date.getSeconds(), // 秒
+      'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+      'S': date.getMilliseconds() // 毫秒
+    };
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+      }
+    }
+    return fmt;
+  } else {
+    return date;
+  }
+}
+
+/**
+   * 把日期转换为例如：几分钟前，几天前这种格式显示
+   * @param {String} timeString 时间字符串，要求能够转换为时间戳
+   */
+function translateTimeToText(timeString) {
+  var time = Math.ceil((Date.now() - Date.parse(timeString)) / 1000);
+  var timeText = '';
+  if (time <= 60) {
+    timeText = '刚刚';
+  } else if (time < 3600) {
+    timeText = "".concat(Math.ceil(time / 60), "\u5206\u949F\u524D");
+  } else if (time < 86400) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600)), "\u5C0F\u65F6\u524D");
+  } else if (time < 86400 * 30) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24)), "\u5929\u524D");
+  } else if (time < 86400 * 365) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 30)), "\u4E2A\u6708\u524D");
+  } else if (time >= 86400 * 365) {
+    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 365)), "\u5E74\u524D");
+  }
+  return timeText;
+}
+
+function getUUid() {// 获取唯一值
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0;var v = c === 'x' ? r : r & 0x3 | 0x8;
+    return v.toString(16);
+  });
+}
+
+/**
+   * 获取指定长度数据范围内指定书目的随机数
+   * @param {*} length 随机数长度范围
+   * @param {*} count 随机数随机数目
+   */
+function getRandomList(length, count) {
+  if (length >= count) {
+    var lengthArray = [];
+    var randomArray = [];
+    for (var i = 0; i < length; i++) {
+      lengthArray[i] = i;
+    }
+    lengthArray.sort(function () {
+      return 0.5 - Math.random();
+    });
+    for (var _i = 0; _i < count; _i++) {
+      randomArray.push(lengthArray[_i]);
+    }
+    return randomArray;
+  } else {
+    return false;
+  }
+}
 
 /***/ }),
 
@@ -7570,7 +7757,7 @@ internalMixin(Vue);
 
 /***/ }),
 
-/***/ 21:
+/***/ 22:
 /*!*******************************************************************!*\
   !*** F:/miniapp-blog/codes/miniapp-blog/common/image/article.png ***!
   \*******************************************************************/
@@ -7578,6 +7765,116 @@ internalMixin(Vue);
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "static/img/article.cc7ea550.png";
+
+/***/ }),
+
+/***/ 23:
+/*!******************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/api/home.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleSummarys = getArticleSummarys;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 24));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+function getArticleSummarys() {var order = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'descUpdateAt';var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0; // 查询文章简略信息
+  return request.request({
+    method: 'post',
+    url: '/api/home/home/articlelist',
+    data: {
+      limit: limit,
+      offset: offset,
+      order: order } });
+
+
+}
+
+/***/ }),
+
+/***/ 24:
+/*!***************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/request.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {var initdata = _interopRequireWildcard(__webpack_require__(/*! @/common/data/initdata.js */ 25));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+module.exports = {
+  request: request };
+
+
+function request(options) {var
+
+  url =
+
+
+
+
+
+
+
+
+
+  options.url,data = options.data,header = options.header,method = options.method,dataType = options.dataType,responseType = options.responseType,success = options.success,fail = options.fail,complete = options.complete,showError = options.showError;
+
+  return new Promise(function (resolve, reject) {
+    uni.request({
+      url: initdata.baseUrl + url,
+      data: data,
+      header: header,
+      method: method,
+      dataType: dataType,
+      responseType: responseType,
+      success: function success(res) {
+        accessPermission(res.data, showError).
+        then(function (data) {
+          resolve(data);
+        }).
+        catch(function (data) {
+          reject(data);
+        });
+      },
+      fail: function fail(res) {
+        reject(res);
+      },
+      complete: complete });
+
+  });
+}
+
+function accessPermission(res, showError) {
+  return new Promise(function (resolve, reject) {
+    if (res.errcode >= 200 && res.errcode < 300 || res.errcode === 304) {
+      resolve(res.data);
+    } else {
+      if (!showError) {// showError为真（默认为真），由这个方法显示错误信息
+        uni.showToast({
+          title: res.message,
+          icon: 'none',
+          duration: 2000 });
+
+      } else {// showError为真，把错误信息暴露给外部
+        reject(res.message);
+      }
+    }
+  });
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+
+/***/ 25:
+/*!******************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/common/data/initdata.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = void 0;var baseUrl = 'https://immortalboy.cn';exports.baseUrl = baseUrl;
 
 /***/ }),
 
@@ -8511,7 +8808,7 @@ main();
 
 /***/ }),
 
-/***/ 55:
+/***/ 59:
 /*!************************************************************************!*\
   !*** F:/miniapp-blog/codes/miniapp-blog/components/uni-icons/icons.js ***!
   \************************************************************************/
@@ -8624,295 +8921,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-23720191024001","_inBundle":false,"_integrity":"sha512-vJEk493Vdb8KueNzR2otzDi23rfyRcQBo/t1R41MwNGPk+AUB94gh10+HVLo98DRcvMzkuVofz3KXTAfEx24iw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-23720191024001.tgz","_shasum":"18272814446a9bc6053bc92666ec7064a1767588","_spec":"@dcloudio/uni-stat@next","_where":"/Users/fxy/Documents/DCloud/HbuilderX-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"a725c04ef762e5df78a9a69d140c2666e0de05fc","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-23720191024001"};
-
-/***/ }),
-
-/***/ 63:
-/*!******************************************************!*\
-  !*** F:/miniapp-blog/codes/miniapp-blog/api/home.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleSummarys = getArticleSummarys;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 64));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
-
-function getArticleSummarys() {var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;var order = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'descUpdateAt'; // 查询文章简略信息
-  return request.request({
-    method: 'post',
-    url: '/api/home/home/articlelist',
-    data: {
-      limit: limit,
-      offset: offset,
-      order: order } });
-
-
-}
-
-/***/ }),
-
-/***/ 64:
-/*!***************************************************************!*\
-  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/request.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {var initdata = _interopRequireWildcard(__webpack_require__(/*! @/common/data/initdata.js */ 65));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
-
-module.exports = {
-  request: request };
-
-
-function request(options) {var
-
-  url =
-
-
-
-
-
-
-
-
-
-  options.url,data = options.data,header = options.header,method = options.method,dataType = options.dataType,responseType = options.responseType,success = options.success,fail = options.fail,complete = options.complete,showError = options.showError;
-
-  return new Promise(function (resolve, reject) {
-    uni.request({
-      url: initdata.baseUrl + url,
-      data: data,
-      header: header,
-      method: method,
-      dataType: dataType,
-      responseType: responseType,
-      success: function success(res) {
-        accessPermission(res.data, showError).
-        then(function (data) {
-          resolve(data);
-        }).
-        catch(function (data) {
-          reject(data);
-        });
-      },
-      fail: function fail(res) {
-        reject(res);
-      },
-      complete: complete });
-
-  });
-}
-
-function accessPermission(res, showError) {
-  return new Promise(function (resolve, reject) {
-    if (res.errcode >= 200 && res.errcode < 300 || res.errcode === 304) {
-      resolve(res.data);
-    } else {
-      if (!showError) {// showError为真（默认为真），由这个方法显示错误信息
-        uni.showToast({
-          title: res.message,
-          icon: 'none',
-          duration: 2000 });
-
-      } else {// showError为真，把错误信息暴露给外部
-        reject(res.message);
-      }
-    }
-  });
-}
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
-
-/***/ }),
-
-/***/ 65:
-/*!******************************************************************!*\
-  !*** F:/miniapp-blog/codes/miniapp-blog/common/data/initdata.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = void 0;var baseUrl = 'https://immortalboy.cn';exports.baseUrl = baseUrl;
-
-/***/ }),
-
-/***/ 66:
-/*!*************************************************************!*\
-  !*** F:/miniapp-blog/codes/miniapp-blog/common/js/tools.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default =
-
-{
-  install: function install(Vue, options) {
-    // 全局函数的hasClass()、addClass()、removeClass()
-    // 用法示例：this.funcName()
-    Vue.prototype.hasClass = hasClass;
-    Vue.prototype.addClass = addClass;
-    Vue.prototype.removeClass = removeClass;
-    Vue.prototype.dateToString = dateToString;
-    Vue.prototype.timeMillisFormat = timeMillisFormat;
-    Vue.prototype.translateTimeToText = translateTimeToText;
-    Vue.prototype.getUUid = getUUid;
-    Vue.prototype.getRandomList = getRandomList;
-  } };exports.default = _default;
-
-
-function removeClass() {
-  var elem = arguments[0];
-  var cls = arguments[1];
-  if (hasClass(elem, cls)) {
-    var newClass = ' ' + elem.className.replace(/[\t\r\n]/g, '') + ' ';
-    while (newClass.indexOf(' ' + cls + ' ') >= 0) {
-      newClass = newClass.replace(' ' + cls + ' ', ' ');
-    }
-    elem.className = newClass.replace(/^\s+|\s+$/g, '');
-    return true;
-  }
-  return false;
-}
-
-function addClass() {
-  var elem = arguments[0];
-  var cls = arguments[1];
-  if (!hasClass(elem, cls)) {
-    elem.className = elem.className === '' ? cls : elem.className + ' ' + cls;
-    return true;
-  }
-  return false;
-}
-
-function hasClass() {
-  var elem = arguments[0];
-  var cls = arguments[1];
-  cls = cls || '';
-  if (cls.replace(/\s/g, '').length === 0) {
-    // 当cls没有参数时，返回false
-    return false;
-  }
-  return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
-}
-
-function dateToString(date, stringType) {
-  var dateObj;
-  dateObj = Date.parse(arguments[0]);
-  dateObj = new Date(dateObj);
-  var year = dateObj.getFullYear();
-  var month = dateObj.getMonth() + 1 < 10 ? '0' + (dateObj.getMonth() + 1) : dateObj.getMonth() + 1;
-  var day = dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate();
-  var hour = dateObj.getHours() < 10 ? '0' + dateObj.getHours() : dateObj.getHours();
-  var minute = dateObj.getMinutes() < 10 ? '0' + dateObj.getMinutes() : dateObj.getMinutes();
-  var second = dateObj.getSeconds() < 10 ? '0' + dateObj.getSeconds() : dateObj.getSeconds();
-  var dateString = '';
-  if (arguments.length > 1 && arguments[1] === 'date') {
-    dateString = year + '-' + month + '-' + day;
-  } else if (arguments.length > 1 && arguments[1] === 'time') {
-    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-  } else if (arguments.length === 1) {
-    dateString = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-  }
-  return dateString;
-}
-
-/**
-   * 时间戳格式化
-   * @param {Long} 时间戳
-   * @param {String} 格式化, 如: yyyy-MM-dd
-   */
-function timeMillisFormat(timeMillis) {var pattern = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'yyyy-MM-dd hh:mm:ss';
-  var dateObj;
-  if (!isNaN(timeMillis)) {
-    dateObj = new Date(Number(timeMillis));
-  } else {
-    // 转换时间格式2018-11-11为2018/11/11
-    dateObj = new Date(Date.parse(timeMillis));
-  }
-  return dformat(dateObj, pattern);
-}
-
-function dformat(date, fmt) {
-  if (date instanceof Date) {
-    var o = {
-      'M+': date.getMonth() + 1, // 月份
-      'd+': date.getDate(), // 日
-      'h+': date.getHours(), // 小时
-      'm+': date.getMinutes(), // 分
-      's+': date.getSeconds(), // 秒
-      'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
-      'S': date.getMilliseconds() // 毫秒
-    };
-    if (/(y+)/.test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-    }
-    for (var k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
-      }
-    }
-    return fmt;
-  } else {
-    return date;
-  }
-}
-
-/**
-   * 把日期转换为例如：几分钟前，几天前这种格式显示
-   * @param {String} timeString 时间字符串，要求能够转换为时间戳
-   */
-function translateTimeToText(timeString) {
-  var time = Math.ceil((Date.now() - Date.parse(timeString)) / 1000);
-  var timeText = '';
-  if (time <= 60) {
-    timeText = '刚刚';
-  } else if (time < 3600) {
-    timeText = "".concat(Math.ceil(time / 60), "\u5206\u949F\u524D");
-  } else if (time < 86400) {
-    timeText = "".concat(Math.ceil(time / (60 * 3600)), "\u5C0F\u65F6\u524D");
-  } else if (time < 86400 * 30) {
-    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24)), "\u5929\u524D");
-  } else if (time < 86400 * 365) {
-    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 30)), "\u4E2A\u6708\u524D");
-  } else if (time >= 86400 * 365) {
-    timeText = "".concat(Math.ceil(time / (60 * 3600 * 24 * 365)), "\u5E74\u524D");
-  }
-  return timeText;
-}
-
-function getUUid() {// 获取唯一值
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0;var v = c === 'x' ? r : r & 0x3 | 0x8;
-    return v.toString(16);
-  });
-}
-
-/**
-   * 获取指定长度数据范围内指定书目的随机数
-   * @param {*} length 随机数长度范围
-   * @param {*} count 随机数随机数目
-   */
-function getRandomList(length, count) {
-  if (length >= count) {
-    var lengthArray = [];
-    var randomArray = [];
-    for (var i = 0; i < length; i++) {
-      lengthArray[i] = i;
-    }
-    lengthArray.sort(function () {
-      return 0.5 - Math.random();
-    });
-    for (var _i = 0; _i < count; _i++) {
-      randomArray.push(lengthArray[_i]);
-    }
-    return randomArray;
-  } else {
-    return false;
-  }
-}
+module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-24120191114002","_inBundle":false,"_integrity":"sha512-j68RqeewGyFPfdlzADBoxklEb+0FbzxgQG9/bg12RRX7ISDMEFP9FmNKkpL0CFOrqO1//GHiB5+oxbWhLFMjFw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-24120191114002.tgz","_shasum":"20467f84fc1c5a1d349dd4124f92b678d83dc0b8","_spec":"@dcloudio/uni-stat@next","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"8084e20c55d3df84c36375e5401113a217b62128","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-24120191114002"};
 
 /***/ }),
 
@@ -8924,7 +8933,26 @@ function getRandomList(length, count) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "enablePullDownRefresh": true }, "pages/topics/topics": { "navigationBarTitleText": "文章专题" }, "pages/personcenter/personcenter": { "navigationBarTitleText": "个人中心" } }, "globalStyle": { "navigationBarTextStyle": "black", "navigationBarTitleText": "马克豚博客", "navigationBarBackgroundColor": "#F8F8F8", "backgroundColor": "#F8F8F8" } };exports.default = _default;
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "enablePullDownRefresh": true, "usingComponents": { "uni-search": "/components/uni-search-bar/uni-search-bar", "uni-load-more": "/components/uni-load-more/uni-load-more" } }, "pages/topics/topics": { "navigationBarTitleText": "文章专题", "usingComponents": {} }, "pages/personcenter/personcenter": { "navigationBarTitleText": "个人中心", "usingComponents": {} }, "pages/articledetail/articledetail": {} }, "globalStyle": { "navigationBarTextStyle": "black", "navigationBarTitleText": "马克豚博客", "navigationBarBackgroundColor": "#F8F8F8", "backgroundColor": "#F8F8F8" } };exports.default = _default;
+
+/***/ }),
+
+/***/ 73:
+/*!***************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/api/articledetail.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleDetail = getArticleDetail;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 24));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+function getArticleDetail(articleId) {// 查询指定文章的详细信息
+  return request.request({
+    method: 'get',
+    url: "/api/home/article/article?id=".concat(articleId) });
+
+}
 
 /***/ }),
 

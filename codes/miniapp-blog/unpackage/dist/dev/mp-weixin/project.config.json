@@ -9,7 +9,7 @@
 		"minified": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.7.0",
+	"libVersion": "",
 	"appid": "wx9e2af9f9b254b049",
 	"projectname": "miniapp-blog",
 	"simulatorType": "wechat",
