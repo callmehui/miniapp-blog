@@ -27,6 +27,16 @@
 								v-show="selectedTabIndex === index"
 								v-for="(item, index) in tabs" 
 								:key="index" >
+						<!-- 筛选 -->
+						<view class="filter-hotlevel" v-if="index === 1">
+							<view class="filter" 
+									:class="{'active': subItem.active}" 
+									v-for="(subItem, subIndex) in hotlevelFilters" 
+									:key="subIndex" 
+									@tap="changeHotLevel(subIndex)">
+								<text>{{subItem.name}}</text>
+							</view>
+						</view>	
 						<!-- 文章列表 -->
 						<view 
 							class="tab-content" 
@@ -88,26 +98,52 @@
 					{
 						tabsHeader: {
 							text: '最新',
-							value: 'descUpdateAt',
+							type: 'updatetime',
 							actived: true
 						},
+						limit: 10,
+						offset: 0,
 						tabsContent: []
 					},{
 						tabsHeader: {
 							text: '热门',
-							value: 'descBrowserNum',
+							type: 'hotlevel',
+							order: '',
 							actived: true
 						},
+						limit: 10,
+						offset: 0,
 						tabsContent: []
 					},{
 						tabsHeader: {
 							text: '标签',
-							value: 'descBrowserNum',
+							type: 'tag',
+							filter: '',
 							actived: true
 						},
+						limit: 10,
+						offset: 0,
 						tabsContent: []
 					},
 				],
+				hotlevelFilters: [
+					{
+						name: '浏览最多',
+						value: 'browserNum',
+						active: true
+					},
+					{
+						name: '点赞最多',
+						value: 'likeNum',
+						active: false
+					},
+					{
+						name: '评论最多',
+						value: 'commentNum',
+						active: false
+					},
+				],
+				tagFilters: [],				
 				showLoadMore: false,
 				loadMoreType: 'loading'
 			}
@@ -128,16 +164,40 @@
 			},
 			changeTab (index, value) {
 				this.selectedTabIndex = index
-				let order = ''
-				order = this.tabs[index].tabsHeader.value
-				this.getArticleSummarys(order)
+				let currentTab = this.tabs[index]
+				const params = {
+					limit: currentTab.limit,
+					offset: currentTab.offset,
+					type: currentTab.tabsHeader.type,
+					filter: currentTab.tabsHeader.filter,
+					order: currentTab.tabsHeader.order,
+				} 
+				this.getArticleSummarys(params.limit, params.offset, params.type, params.filter, params.order)
 			},
-			getArticleSummarys (order = 'descUpdateAt') {
+			changeHotLevel (val) {
+				this.hotlevelFilters.forEach((item, index) => {
+					if (val === index) {
+						item.active = true
+						this.tabs[1].tabsHeader.order = item.value
+					} else {
+						item.active = false
+					}
+				})
+				const params = {
+					limit: this.tabs[1].limit,
+					offset: this.tabs[1].offset,
+					type: this.tabs[1].tabsHeader.type,
+					filter: this.tabs[1].tabsHeader.filter,
+					order: this.tabs[1].tabsHeader.order,
+				} 
+				this.getArticleSummarys(params.limit, params.offset, params.type, params.filter, params.order)
+			},
+			getArticleSummarys (limit, offset, type, filter, order) {
 				uni.showLoading({
 					title: '加載中...',
 					mask: true
 				})
-				apiHome.getArticleSummarys(order)
+				apiHome.getArticleSummarys(limit, offset, type, filter, order)
 					.then(response => {
 						this.tabs[this.selectedTabIndex].tabsContent = response.result
 						uni.hideLoading()
@@ -195,6 +255,23 @@ $primary-color: #409EFF;
 				}
 				.tab-content-wrapper {
 					border-bottom: 1px solid #eeeeee;
+					.filter-hotlevel {
+						display: flex;
+						padding: 20rpx 20rpx;
+						border-bottom: 2px solid #eeeeee;
+						.filter {
+							font-size: 14px;
+							color: #666666;
+							background-color: #F1F1F1;
+							margin-right: 16rpx;
+							padding: 12rpx 16rpx;
+							border-radius: 40rpx;
+						}
+						.active {
+							color: #FFFFFF;
+							background-color: $primary-color;
+						}
+					}
 					.tab-content {
 						margin-top: 40rpx;
 						padding-bottom: 20rpx;

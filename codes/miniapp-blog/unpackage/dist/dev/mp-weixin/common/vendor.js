@@ -7778,13 +7778,16 @@ module.exports = __webpack_require__.p + "static/img/article.cc7ea550.png";
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleSummarys = getArticleSummarys;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 24));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
 
-function getArticleSummarys() {var order = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'descUpdateAt';var limit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0; // 查询文章简略信息
+function getArticleSummarys() {var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;var type = arguments.length > 2 ? arguments[2] : undefined;var filter = arguments.length > 3 ? arguments[3] : undefined;var order = arguments.length > 4 ? arguments[4] : undefined; // 查询文章简略信息
+  console.log(limit, offset, type, filter, order);
   return request.request({
     method: 'post',
-    url: '/api/home/home/articlelist',
+    url: '/api/miniapp/home/articlelist',
     data: {
       limit: limit,
       offset: offset,
+      type: type,
+      filter: filter,
       order: order } });
 
 
@@ -7918,6 +7921,25 @@ module.exports = g;
 
 "use strict";
 
+
+/***/ }),
+
+/***/ 46:
+/*!***************************************************************!*\
+  !*** F:/miniapp-blog/codes/miniapp-blog/api/articledetail.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleDetail = getArticleDetail;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 24));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
+
+function getArticleDetail(articleId) {// 查询指定文章的详细信息
+  return request.request({
+    method: 'get',
+    url: "/api/home/article/article?id=".concat(articleId) });
+
+}
 
 /***/ }),
 
@@ -8808,7 +8830,18 @@ main();
 
 /***/ }),
 
-/***/ 59:
+/***/ 6:
+/*!******************************************************!*\
+  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
+  \******************************************************/
+/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
+/***/ (function(module) {
+
+module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-24120191114002","_inBundle":false,"_integrity":"sha512-j68RqeewGyFPfdlzADBoxklEb+0FbzxgQG9/bg12RRX7ISDMEFP9FmNKkpL0CFOrqO1//GHiB5+oxbWhLFMjFw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-24120191114002.tgz","_shasum":"20467f84fc1c5a1d349dd4124f92b678d83dc0b8","_spec":"@dcloudio/uni-stat@next","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"8084e20c55d3df84c36375e5401113a217b62128","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-24120191114002"};
+
+/***/ }),
+
+/***/ 68:
 /*!************************************************************************!*\
   !*** F:/miniapp-blog/codes/miniapp-blog/components/uni-icons/icons.js ***!
   \************************************************************************/
@@ -8914,17 +8947,6 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 /***/ }),
 
-/***/ 6:
-/*!******************************************************!*\
-  !*** ./node_modules/@dcloudio/uni-stat/package.json ***!
-  \******************************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, deprecated, description, devDependencies, files, gitHead, homepage, license, main, name, repository, scripts, version, default */
-/***/ (function(module) {
-
-module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.0.0-24120191114002","_inBundle":false,"_integrity":"sha512-j68RqeewGyFPfdlzADBoxklEb+0FbzxgQG9/bg12RRX7ISDMEFP9FmNKkpL0CFOrqO1//GHiB5+oxbWhLFMjFw==","_location":"/@dcloudio/uni-stat","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"@dcloudio/uni-stat@next","name":"@dcloudio/uni-stat","escapedName":"@dcloudio%2funi-stat","scope":"@dcloudio","rawSpec":"next","saveSpec":null,"fetchSpec":"next"},"_requiredBy":["#USER","/","/@dcloudio/vue-cli-plugin-uni"],"_resolved":"https://registry.npmjs.org/@dcloudio/uni-stat/-/uni-stat-2.0.0-24120191114002.tgz","_shasum":"20467f84fc1c5a1d349dd4124f92b678d83dc0b8","_spec":"@dcloudio/uni-stat@next","_where":"/Users/guoshengqiang/Documents/dcloud-plugins/release/uniapp-cli","author":"","bugs":{"url":"https://github.com/dcloudio/uni-app/issues"},"bundleDependencies":false,"deprecated":false,"description":"","devDependencies":{"@babel/core":"^7.5.5","@babel/preset-env":"^7.5.5","eslint":"^6.1.0","rollup":"^1.19.3","rollup-plugin-babel":"^4.3.3","rollup-plugin-clear":"^2.0.7","rollup-plugin-commonjs":"^10.0.2","rollup-plugin-copy":"^3.1.0","rollup-plugin-eslint":"^7.0.0","rollup-plugin-json":"^4.0.0","rollup-plugin-node-resolve":"^5.2.0","rollup-plugin-replace":"^2.2.0","rollup-plugin-uglify":"^6.0.2"},"files":["dist","package.json","LICENSE"],"gitHead":"8084e20c55d3df84c36375e5401113a217b62128","homepage":"https://github.com/dcloudio/uni-app#readme","license":"Apache-2.0","main":"dist/index.js","name":"@dcloudio/uni-stat","repository":{"type":"git","url":"git+https://github.com/dcloudio/uni-app.git","directory":"packages/uni-stat"},"scripts":{"build":"NODE_ENV=production rollup -c rollup.config.js","dev":"NODE_ENV=development rollup -w -c rollup.config.js"},"version":"2.0.0-24120191114002"};
-
-/***/ }),
-
 /***/ 7:
 /*!**********************************************************************!*\
   !*** F:/miniapp-blog/codes/miniapp-blog/pages.json?{"type":"style"} ***!
@@ -8933,26 +8955,7 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "enablePullDownRefresh": true, "usingComponents": { "uni-search": "/components/uni-search-bar/uni-search-bar", "uni-load-more": "/components/uni-load-more/uni-load-more" } }, "pages/topics/topics": { "navigationBarTitleText": "文章专题", "usingComponents": {} }, "pages/personcenter/personcenter": { "navigationBarTitleText": "个人中心", "usingComponents": {} }, "pages/articledetail/articledetail": {} }, "globalStyle": { "navigationBarTextStyle": "black", "navigationBarTitleText": "马克豚博客", "navigationBarBackgroundColor": "#F8F8F8", "backgroundColor": "#F8F8F8" } };exports.default = _default;
-
-/***/ }),
-
-/***/ 73:
-/*!***************************************************************!*\
-  !*** F:/miniapp-blog/codes/miniapp-blog/api/articledetail.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.getArticleDetail = getArticleDetail;var request = _interopRequireWildcard(__webpack_require__(/*! @/common/js/request.js */ 24));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}
-
-function getArticleDetail(articleId) {// 查询指定文章的详细信息
-  return request.request({
-    method: 'get',
-    url: "/api/home/article/article?id=".concat(articleId) });
-
-}
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = { "pages": { "pages/index/index": { "navigationBarTitleText": "首页", "enablePullDownRefresh": true }, "pages/topics/topics": { "navigationBarTitleText": "文章专题" }, "pages/personcenter/personcenter": { "navigationBarTitleText": "个人中心" }, "pages/articledetail/articledetail": {} }, "globalStyle": { "navigationBarTextStyle": "black", "navigationBarTitleText": "马克豚博客", "navigationBarBackgroundColor": "#F8F8F8", "backgroundColor": "#F8F8F8" } };exports.default = _default;
 
 /***/ }),
 

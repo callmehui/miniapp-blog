@@ -226,8 +226,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
 var _article = _interopRequireDefault(__webpack_require__(/*! @/common/image/article.png */ 22));
-var apiHome = _interopRequireWildcard(__webpack_require__(/*! @/api/home.js */ 23));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var UniSearch = function UniSearch() {return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 40));};var UniLoadMore = function UniLoadMore() {return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 47));};var _default =
+var apiHome = _interopRequireWildcard(__webpack_require__(/*! @/api/home.js */ 23));function _interopRequireWildcard(obj) {if (obj && obj.__esModule) {return obj;} else {var newObj = {};if (obj != null) {for (var key in obj) {if (Object.prototype.hasOwnProperty.call(obj, key)) {var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};if (desc.get || desc.set) {Object.defineProperty(newObj, key, desc);} else {newObj[key] = obj[key];}}}}newObj.default = obj;return newObj;}}function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var UniSearch = function UniSearch() {return __webpack_require__.e(/*! import() | components/uni-search-bar/uni-search-bar */ "components/uni-search-bar/uni-search-bar").then(__webpack_require__.bind(null, /*! @/components/uni-search-bar/uni-search-bar.vue */ 49));};var UniLoadMore = function UniLoadMore() {return __webpack_require__.e(/*! import() | components/uni-load-more/uni-load-more */ "components/uni-load-more/uni-load-more").then(__webpack_require__.bind(null, /*! @/components/uni-load-more/uni-load-more.vue */ 56));};var _default =
 
 {
   components: {
@@ -245,26 +255,52 @@ var apiHome = _interopRequireWildcard(__webpack_require__(/*! @/api/home.js */ 2
       {
         tabsHeader: {
           text: '最新',
-          value: 'descUpdateAt',
+          type: 'updatetime',
           actived: true },
 
+        limit: 10,
+        offset: 0,
         tabsContent: [] },
       {
         tabsHeader: {
           text: '热门',
-          value: 'descBrowserNum',
+          type: 'hotlevel',
+          order: '',
           actived: true },
 
+        limit: 10,
+        offset: 0,
         tabsContent: [] },
       {
         tabsHeader: {
           text: '标签',
-          value: 'descBrowserNum',
+          type: 'tag',
+          filter: '',
           actived: true },
 
+        limit: 10,
+        offset: 0,
         tabsContent: [] }],
 
 
+      hotlevelFilters: [
+      {
+        name: '浏览最多',
+        value: 'browserNum',
+        active: true },
+
+      {
+        name: '点赞最多',
+        value: 'likeNum',
+        active: false },
+
+      {
+        name: '评论最多',
+        value: 'commentNum',
+        active: false }],
+
+
+      tagFilters: [],
       showLoadMore: false,
       loadMoreType: 'loading' };
 
@@ -285,18 +321,42 @@ var apiHome = _interopRequireWildcard(__webpack_require__(/*! @/api/home.js */ 2
     },
     changeTab: function changeTab(index, value) {
       this.selectedTabIndex = index;
-      var order = '';
-      order = this.tabs[index].tabsHeader.value;
-      this.getArticleSummarys(order);
+      var currentTab = this.tabs[index];
+      var params = {
+        limit: currentTab.limit,
+        offset: currentTab.offset,
+        type: currentTab.tabsHeader.type,
+        filter: currentTab.tabsHeader.filter,
+        order: currentTab.tabsHeader.order };
+
+      this.getArticleSummarys(params.limit, params.offset, params.type, params.filter, params.order);
     },
-    getArticleSummarys: function getArticleSummarys() {var _this2 = this;var order = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'descUpdateAt';
+    changeHotLevel: function changeHotLevel(val) {var _this2 = this;
+      this.hotlevelFilters.forEach(function (item, index) {
+        if (val === index) {
+          item.active = true;
+          _this2.tabs[1].tabsHeader.order = item.value;
+        } else {
+          item.active = false;
+        }
+      });
+      var params = {
+        limit: this.tabs[1].limit,
+        offset: this.tabs[1].offset,
+        type: this.tabs[1].tabsHeader.type,
+        filter: this.tabs[1].tabsHeader.filter,
+        order: this.tabs[1].tabsHeader.order };
+
+      this.getArticleSummarys(params.limit, params.offset, params.type, params.filter, params.order);
+    },
+    getArticleSummarys: function getArticleSummarys(limit, offset, type, filter, order) {var _this3 = this;
       uni.showLoading({
         title: '加載中...',
         mask: true });
 
-      apiHome.getArticleSummarys(order).
+      apiHome.getArticleSummarys(limit, offset, type, filter, order).
       then(function (response) {
-        _this2.tabs[_this2.selectedTabIndex].tabsContent = response.result;
+        _this3.tabs[_this3.selectedTabIndex].tabsContent = response.result;
         uni.hideLoading();
       });
     },

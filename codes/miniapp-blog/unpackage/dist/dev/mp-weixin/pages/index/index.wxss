@@ -77,6 +77,26 @@
 .home .tabs-wrapper .tabs .tab-item .tab-content-wrapper.data-v-60b235b5 {
     border-bottom: 1px solid #eeeeee;
 }
+.home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .filter-hotlevel.data-v-60b235b5 {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      padding: 20rpx 20rpx;
+      border-bottom: 2px solid #eeeeee;
+}
+.home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .filter-hotlevel .filter.data-v-60b235b5 {
+        font-size: 14px;
+        color: #666666;
+        background-color: #F1F1F1;
+        margin-right: 16rpx;
+        padding: 12rpx 16rpx;
+        border-radius: 40rpx;
+}
+.home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .filter-hotlevel .active.data-v-60b235b5 {
+        color: #FFFFFF;
+        background-color: #409EFF;
+}
 .home .tabs-wrapper .tabs .tab-item .tab-content-wrapper .tab-content.data-v-60b235b5 {
       margin-top: 40rpx;
       padding-bottom: 20rpx;

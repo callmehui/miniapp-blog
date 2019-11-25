@@ -1,13 +1,16 @@
 import * as request from '@/common/js/request.js'
 
-function getArticleSummarys (order = 'descUpdateAt', limit = 10, offset = 0) { // 查询文章简略信息
+function getArticleSummarys (limit = 10, offset = 0, type, filter, order) { // 查询文章简略信息
+	console.log(limit, offset, type, filter, order);
 	return request.request({
 		method: 'post', 
-		url: '/api/home/home/articlelist', 
+		url: '/api/miniapp/home/articlelist', 
 		data: {
-			limit: limit,
-			offset: offset,
-			order: order
+			limit,
+			offset,
+			type,
+			filter,
+			order
 		}
 	})
 }
